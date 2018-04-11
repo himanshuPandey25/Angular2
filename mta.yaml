@@ -1,0 +1,12 @@
+ID: Angular2
+_schema-version: '2.0'
+version: 0.0.1
+
+modules:
+ - name: AngularUI
+   type: nodejs
+   path: AngularUI
+   provides:
+    - name: AngularUI_api
+      properties:
+         url: ${default-url}
