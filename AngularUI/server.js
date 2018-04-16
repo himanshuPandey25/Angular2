@@ -1,12 +1,35 @@
-/*eslint no-console: 0*/
+/*eslint no-console: 0, no-unused-lets: 0, no-undef:0, no-unused-vars: 0*/
+/*eslint-env node, es6 */
 "use strict";
 
-var http = require("http");
+//var https = require("https");
+//var xsenv = require("@sap/xsenv");
 var port = process.env.PORT || 3000;
+var server = require("http").createServer();
+//https.globalAgent.options.ca = xsenv.loadCertificates();
+global.__base = __dirname + "/";
 
-http.createServer(function (req, res) {
-  res.writeHead(200, {"Content-Type": "text/plain"});
-  res.end("Hello World\n");
-}).listen(port);
+let express = require("express");
+let app = express();
 
-console.log("Server listening on port %d", port);
+app.disable('x-powered-by');
+
+app.options("/*", function(req, res, next){
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.send(200);
+});
+
+// Point static path to dist
+app.use(express.static(global.__base + 'dist'));
+
+// Catch all other routes and return the index file
+app.all('*', (req, res) => {
+  res.sendFile(global.__base + 'dist/index.html');
+});
+
+//Start the Server 
+server.on("request", app);
+server.listen(port, function() {
+	console.info(`HTTP Server: ${server.address().port}`);
+});
